@@ -112,7 +112,7 @@ class TulsianiNetwork(nn.Module):
             n_filters *= 2
 
         # Add the two fully connected layers
-        input_channels = n_filters / 2
+        input_channels = n_filters // 2
         n_filters = 100
         for i in range(2):
             encoder_layers.append(nn.Conv3d(input_channels, n_filters, 1))
