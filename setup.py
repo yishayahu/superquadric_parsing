@@ -43,7 +43,7 @@ def get_extensions():
                 "learnable_primitives/fast_sampler/sampling.cpp"
             ],
             language="c++11",
-            libraries=["stdc++"],
+            libraries=["bits/stdc++"],
             include_dirs=[np.get_include()],
             extra_compile_args=["-std=c++11", "-O3"]
         )
@@ -54,18 +54,17 @@ def get_install_requirements():
     return [
         "numpy",
         "scikit-learn",
-        "trimesh==2.38.42",
-        "torch==0.4.1",
-        "torchvision==0.1.8",
+        "trimesh",
+        "torch",
+        "torchvision",
         "progress==1.4",
         "cython",
         "Pillow",
         "pyquaternion",
         "backports.functools_lru_cache",
         "sympy",
-        "matplotlib==2.2.4",
+        "matplotlib",
         "seaborn",
-        "mayavi"
     ]
 
 
@@ -84,8 +83,8 @@ def setup_package():
             "License :: OSI Approved :: MIT License",
             "Topic :: Scientific/Engineering",
             "Programming Language :: Python",
-            "Programming Language :: Python :: 2",
-            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.8",
         ],
         install_requires=get_install_requirements(),
         ext_modules=get_extensions()

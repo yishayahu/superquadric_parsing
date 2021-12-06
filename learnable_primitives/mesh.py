@@ -8,7 +8,14 @@ import trimesh
 import re
 
 from .pointcloud import PointcloudFromOBJ, Pointcloud, PointcloudFromOFF
-
+def as_mesh(scene_or_mesh):
+    if isinstance(scene_or_mesh, trimesh.Scene):
+        mesh = trimesh.util.concatenate([
+            trimesh.Trimesh(vertices=m.vertices, faces=m.faces)
+            for m in scene_or_mesh.geometry.values()])
+    else:
+        mesh = scene_or_mesh
+    return mesh
 
 class Mesh(object):
     """A collection of vertices, normals and faces that construct a 3D mesh of
@@ -348,9 +355,12 @@ class Trimesh(Mesh):
         self.mesh_file = mesh_file
         # Raise Exception in case the given file does not exist
         if not os.path.exists(mesh_file):
-            raise ValueError("File does not exist : %s" % (mesh_file,))
+            mesh_file = mesh_file.replace('model.obj','models')
+            mesh_file = os.path.join(mesh_file,'model_normalized.obj')
+            if not os.path.exists(mesh_file):
+                raise ValueError("File does not exist : %s" % (mesh_file,))
         self._mesh = None
-
+        self.mesh_file = mesh_file
         self._normals = None
         self._faces = None
         self._faces_idxs = None
@@ -364,6 +374,7 @@ class Trimesh(Mesh):
 
     def _normalize_points(self):
         """Make sure that points lie in the unit cube."""
+
         points = self.mesh.vertices.T
         mins = np.min(points, axis=1, keepdims=True)
         steps = np.max(points, axis=1, keepdims=True) - mins
@@ -375,6 +386,7 @@ class Trimesh(Mesh):
     def mesh(self):
         if self._mesh is None:
             self._mesh = trimesh.load(self.mesh_file)
+            self._mesh = as_mesh(self._mesh)
             # Make sure that the face orinetations are ok
             # trimesh.repair.fix_normals(self.mesh, multibody=True)
             # trimesh.repair.fix_winding(self.mesh)

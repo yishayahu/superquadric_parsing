@@ -28,7 +28,7 @@ from learnable_primitives.primitives import\
     euler_angles_to_rotation_matrices, quaternions_to_rotation_matrices
 from learnable_primitives.voxelizers import VoxelizerFactory
 
-from mayavi import mlab
+
 
 
 def get_shape_configuration(use_cuboids):
@@ -135,7 +135,7 @@ def main(argv):
     )
 
     # TODO: Change batch_size in dataloader
-    dataloader = DataLoader(dataset, batch_size=1, num_workers=4)
+    dataloader = DataLoader(dataset, batch_size=1, num_workers=0)
 
     network_params = NetworkParameters.from_options(args)
     # Build the model to be used for testing
@@ -186,8 +186,8 @@ def main(argv):
         pts = pts.squeeze().detach().numpy().T
 
         on_prims = 0
-        fig = mlab.figure(size=(400, 400), bgcolor=(1, 1, 1))
-        mlab.view(azimuth=0.0, elevation=0.0, distance=2)
+        # fig = mlab.figure(size=(400, 400), bgcolor=(1, 1, 1))
+        # mlab.view(azimuth=0.0, elevation=0.0, distance=2)
         # Uncomment to visualize the points sampled from the target mesh
         # t = np.array([1.2, 0, 0]).reshape(3, -1)
         # pts_n = pts + t
@@ -229,33 +229,33 @@ def main(argv):
             )
             if probs[0, i] >= args.prob_threshold:
                 on_prims += 1
-                mlab.mesh(
-                    x_tr,
-                    y_tr,
-                    z_tr,
-                    color=tuple(colors[i % len(colors)]),
-                    opacity=1.0
-                )
+                # mlab.mesh(
+                #     x_tr,
+                #     y_tr,
+                #     z_tr,
+                #     color=tuple(colors[i % len(colors)]),
+                #     opacity=1.0
+                # )
                 primitive_files.append(
                     os.path.join(args.output_directory, "primitive_%d.p" % (i,))
                 )
 
-        if args.with_animation:
-            cnt = 0
-            for az in range(0, 360, 1):
-                cnt += 1
-                mlab.view(azimuth=az, elevation=0.0, distance=2)
-                mlab.savefig(
-                    os.path.join(
-                        args.output_directory,
-                        "img_%04d.png" % (cnt,)
-                    )
-                )
+        # if args.with_animation:
+        #     cnt = 0
+        #     for az in range(0, 360, 1):
+        #         cnt += 1
+        #         mlab.view(azimuth=az, elevation=0.0, distance=2)
+        #         mlab.savefig(
+        #             os.path.join(
+        #                 args.output_directory,
+        #                 "img_%04d.png" % (cnt,)
+        #             )
+        #         )
         for i in range(args.n_primitives):
             print( i, probs[0, i])
 
         print( "Using %d primitives out of %d" % (on_prims, args.n_primitives))
-        mlab.show()
+        # mlab.show()
 
         if args.save_prediction_as_mesh:
             print ("Saving prediction as mesh....")
